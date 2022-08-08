@@ -32,7 +32,7 @@ sendSuccess = (res, data, resCode) => {
 };
 
 triggerPipeline = (data) =>{
-	const {title,subTitle,url,name,email} = data;
+	const {id,title,subtitle,url,name,email} = data;
     const headers = {
         'Accept': 'application/vnd.go.cd.v1+json',
         'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ triggerPipeline = (data) =>{
             },
             {
                 "name":"VIDEO_ID",
-                "value":"1234-5678-9101"
+                "value":id,
             },
             {
                 "name":"TITLE",

@@ -1,12 +1,16 @@
 require('dotenv').config()
 const express = require("express");
+var morgan = require('morgan')
+const cors  = require('cors');
 const bodyParser = require('body-parser');
 const funcs = require("./utils/funcs");
 
 const app = express();
 
+app.use(morgan("tiny"));
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use(cors());
 
 app.use('/pipeline',require('./routes/pipeline.js'));
 

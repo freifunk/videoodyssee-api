@@ -5,3 +5,5 @@ package-lock.json
 *.gz
 .DS_Store
 .env
+.vscode
+*.sqlite
