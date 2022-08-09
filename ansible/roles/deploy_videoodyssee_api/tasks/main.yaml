@@ -1,0 +1,36 @@
+---
+- name: install required tools
+  apt:
+    name: 
+    - npm
+    - git
+    - systemd
+    state: latest
+    update_cache: yes
+
+- name: Create a new user for the Videoodyssee API service
+  user:
+    name: videoodyssee
+    createhome: no
+    state: present
+
+- name: Download the Express API code from the GitHub
+  git:
+    repo: 'https://github.com/0xvj/videoodyssee-api.git'
+    dest: "/opt/videoodyssee-api"
+
+- name: Change the ownership of the directory
+  file:
+    path: "/opt/videoodyssee-api"
+    owner: "videoodyssee"
+
+
+
+
+
+
+
+# - name: start gocd-agent service
+#   service:
+#     name: go-agent
+#     state: restarted

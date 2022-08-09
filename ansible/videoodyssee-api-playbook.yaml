@@ -1,0 +1,7 @@
+---
+- name: Deploy Videoodyssee API
+  hosts: api
+  become: yes
+  become_method: sudo
+  roles:
+    - deploy_videoodyssee_api
