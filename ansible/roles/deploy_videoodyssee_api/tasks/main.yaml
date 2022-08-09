@@ -18,19 +18,38 @@
   git:
     repo: 'https://github.com/0xvj/videoodyssee-api.git'
     dest: "/opt/videoodyssee-api"
+    force: yes
 
 - name: Change the ownership of the directory
   file:
     path: "/opt/videoodyssee-api"
     owner: "videoodyssee"
 
+- name: Install Dependencies with NPM install command
+  shell: "npm install"
+  args:
+    chdir: "/opt/videoodyssee-api"
 
 
+- name: Copy ENV to .env file 
+  template: >
+    src=videoodyssee-api.env.j2 
+    dest=/opt/videoodyssee-api/.env
+    owner=videoodyssee
 
+- name: Create a service file for the API
+  template: >
+    src=videoodyssee-api.service.j2
+    dest=/etc/systemd/system/videoodyssee-api.service
+    owner=videoodyssee
+    mode=0755
+  register: service_file  
 
+- name: reload systemctl
+  command: systemctl daemon-reload    
+  when: service_file.changed
 
-
-# - name: start gocd-agent service
-#   service:
-#     name: go-agent
-#     state: restarted
+- name: start videoodyssee API service
+  service:
+    name: videoodyssee-api
+    state: restarted

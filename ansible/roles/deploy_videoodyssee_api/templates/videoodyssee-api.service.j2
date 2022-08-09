@@ -1,0 +1,16 @@
+
+[Unit]
+Description=NodeJS Express API for Videoodysse frontend application
+Documentation=https://github.com/0xvj/videoodyssee-api
+After=network.target
+
+[Service]
+Type=simple
+
+EnvironmentFile=/opt/videoodyssee-api/.env
+ExecStart=/usr/bin/node /opt/videoodyssee-api/server.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
