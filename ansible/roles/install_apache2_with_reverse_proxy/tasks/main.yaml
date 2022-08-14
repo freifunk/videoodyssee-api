@@ -1,0 +1,65 @@
+---
+- name: install apache
+  ansible.builtin.apt:
+    name: apache2
+    state: present
+    update_cache: yes
+- name: certificates
+  include_role:
+      name: geerlingguy.certbot
+  vars:
+      certbot_create_if_missing: true
+      certbot_auto_renew_user: root
+      certbot_create_method: standalone
+      certbot_install_method: package
+      certbot_create_standalone_stop_services:
+        - apache2
+      certbot_certs:
+        - email: "{{ email }}"
+          domains: 
+            - "{{ item }}"
+  loop: "{{ domains }}"
+- name: vhosts
+  include_role:
+      name: geerlingguy.apache
+  vars:
+    apache_listen_port_ssl: 8080
+    apache_remove_default_vhost: true
+    apache_vhosts_filename: "videoodyssee-api.conf"
+    apache_ssl_cipher_suite: HIGH:!aNULL:!MD5
+    apache_ssl_protocol: -all +TLSv1.3 +TLSv1.2
+    apache_mods_enabled:
+      - rewrite
+      - ssl
+      - proxy
+      - proxy_http
+      - headers
+    apache_vhosts:
+      - servername: "{{ item }}"
+        redirect_to_https: true
+        extra_parameters: |
+          RewriteEngine On
+          RewriteCond %{HTTPS} !=On
+          RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI}%{QUERY_STRING} [R=301,L]
+    apache_vhosts_ssl:
+      - servername:  "{{ item }}"
+        certificate_file: /etc/letsencrypt/live/{{ item }}/fullchain.pem
+        certificate_key_file: /etc/letsencrypt/live/{{ item }}/privkey.pem
+        extra_parameters: |
+          ProxyPass / http://127.0.0.1:8000/
+          ProxyPassReverse / http://127.0.0.1:8000/
+          Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"
+  loop: "{{ domains }}"
+- name: add port 8080 to the apache ports.conf
+  lineinfile:
+    path: /etc/apache2/ports.conf
+    regexp: '^Listen 8080'
+    line: Listen 8080
+  register: ports_file
+
+- name: restart apache server when ports.conf is changed
+  service:
+    name: apache2
+    enabled: yes
+    state: restarted
+  when: ports_file.changed

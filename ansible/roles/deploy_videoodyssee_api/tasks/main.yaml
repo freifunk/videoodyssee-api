@@ -5,6 +5,7 @@
     - npm
     - git
     - systemd
+    - apache2
     state: latest
     update_cache: yes
 
@@ -52,4 +53,5 @@
 - name: start videoodyssee API service
   service:
     name: videoodyssee-api
+    enabled: yes
     state: restarted

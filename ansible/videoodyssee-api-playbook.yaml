@@ -4,4 +4,5 @@
   become: yes
   become_method: sudo
   roles:
+    - install_apache2_with_reverse_proxy
     - deploy_videoodyssee_api

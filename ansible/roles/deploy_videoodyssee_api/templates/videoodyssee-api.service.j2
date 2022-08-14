@@ -6,7 +6,7 @@ After=network.target
 
 [Service]
 Type=simple
-
+User=videoodyssee
 EnvironmentFile=/opt/videoodyssee-api/.env
 ExecStart=/usr/bin/node /opt/videoodyssee-api/server.js
 Restart=on-failure
