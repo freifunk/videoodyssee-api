@@ -50,16 +50,16 @@
           ProxyPassReverse / http://127.0.0.1:8000/
           Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"
   loop: "{{ domains }}"
-- name: add port 8080 to the apache ports.conf
+- name: add port 8080 to the videoodyssee-api.conf file
   lineinfile:
-    path: /etc/apache2/ports.conf
+    path: /etc/apache2/sites-available/videoodyssee-api.conf 
     regexp: '^Listen 8080'
-    line: Listen 8080
-  register: ports_file
+    line: 'Listen 8080'
+  register: config_file
 
 - name: restart apache server when ports.conf is changed
   service:
     name: apache2
     enabled: yes
     state: restarted
-  when: ports_file.changed
+  when: config_file.changed
