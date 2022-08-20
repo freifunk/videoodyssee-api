@@ -61,4 +61,5 @@ module.exports ={
     sendError,
     sendSuccess,
 	triggerPipeline,
+    instance,
 }

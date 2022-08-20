@@ -24,7 +24,7 @@ router.post('/trigger', async (req, res, next) => {
 
         if (!title || !event || !language || !date || !url || !name || !email)
             throw { err_message: "Missing some required fields !", err_code: 406 }
-        
+        req.body.status = "pending";
         video = await db.Video.create(req.body);
         const response = await funcs.triggerPipeline(video.dataValues);
         if (response.status != 202)

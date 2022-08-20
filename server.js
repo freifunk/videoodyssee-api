@@ -24,6 +24,11 @@ app.use((err, req, res, next) => {
 	else return funcs.sendError(res, err.err_message || err, err.err_code);
 });
 
-app.listen(process.env.PORT,()=>{
+const server = app.listen(process.env.PORT,()=>{
     console.log(`Listening at port ${process.env.PORT}`);
 })
+
+module.exports = {
+	app,
+	server,
+}
