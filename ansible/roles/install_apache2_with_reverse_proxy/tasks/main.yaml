@@ -57,7 +57,7 @@
     line: 'Listen 8080'
   register: config_file
 
-- name: restart apache server when ports.conf is changed
+- name: restart apache server when videoodyssee-api.conf  is changed
   service:
     name: apache2
     enabled: yes
