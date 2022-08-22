@@ -1,9 +1,7 @@
 const { app, server } = require('../server');
 const request = require('supertest');
-require('dotenv').config()
 const { instance } = require('../utils/funcs');
 const MockAdapter = require("axios-mock-adapter");
-const { response } = require('express');
 const mock = new MockAdapter(instance);
 mock.onPost().reply(209, {
     message: 'Request to schedule pipeline processing-pipeline accepted'

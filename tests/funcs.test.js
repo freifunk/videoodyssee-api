@@ -1,4 +1,3 @@
-require('dotenv').config()
 const { triggerPipeline, instance } = require('../utils/funcs');
 const MockAdapter = require("axios-mock-adapter");
 const mock = new MockAdapter(instance);

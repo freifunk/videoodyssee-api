@@ -4,6 +4,7 @@ var morgan = require('morgan')
 const cors  = require('cors');
 const bodyParser = require('body-parser');
 const funcs = require("./utils/funcs");
+const PORT = process.env.PORT || 8000;
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.use((err, req, res, next) => {
 	else return funcs.sendError(res, err.err_message || err, err.err_code);
 });
 
-const server = app.listen(process.env.PORT,()=>{
+const server = app.listen(PORT,()=>{
     console.log(`Listening at port ${process.env.PORT}`);
 })
 
