@@ -5,6 +5,8 @@ mock.onPost().reply(209, {
     message: 'Request to schedule pipeline processing-pipeline accepted'
 });
 
+jest.setTimeout(30000);
+
 
 
 it("triggerPipeline function", async () => {

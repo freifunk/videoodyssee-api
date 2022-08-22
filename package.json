@@ -4,7 +4,7 @@
   "description": "API for videoodyssee frontend",
   "main": "server.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --silent"
   },
   "repository": {
     "type": "git",

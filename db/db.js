@@ -14,7 +14,8 @@ sequelize.authenticate()
         console.error('Unable to connect to the database:', err);
     })
 
-sequelize.sync()
+
+const dbSync = sequelize.sync()
     .then(() => {
         console.log("Synced db.");
     })
@@ -23,6 +24,7 @@ sequelize.sync()
     });
 
 module.exports = {
+    dbSync,
     sequelize,
     Sequelize,
     Video: require("./models/video")(sequelize, Sequelize),

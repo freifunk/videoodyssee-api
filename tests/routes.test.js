@@ -3,13 +3,16 @@ const request = require('supertest');
 const { instance } = require('../utils/funcs');
 const MockAdapter = require("axios-mock-adapter");
 const mock = new MockAdapter(instance);
+const { dbSync } = require('../db/db')
 mock.onPost().reply(209, {
     message: 'Request to schedule pipeline processing-pipeline accepted'
 });
 
 
-
 describe('API routes', function () {
+    beforeAll(()=>{
+        return dbSync;
+    })
     afterAll(done => {
         server.close();
         done();
