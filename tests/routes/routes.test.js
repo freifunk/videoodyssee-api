@@ -1,9 +1,9 @@
-const { app, server } = require('../server');
+const { app, server } = require('../../server');
 const request = require('supertest');
-const { instance } = require('../utils/funcs');
+const { instance } = require('../../utils/funcs');
 const MockAdapter = require("axios-mock-adapter");
 const mock = new MockAdapter(instance);
-const { dbSync } = require('../db/db')
+const { dbSync } = require('../../db/db')
 mock.onPost().reply(209, {
     message: 'Request to schedule pipeline processing-pipeline accepted'
 });

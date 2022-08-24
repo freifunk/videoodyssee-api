@@ -1,11 +1,11 @@
-const { triggerPipeline, instance } = require('../utils/funcs');
+const { triggerPipeline, instance } = require('../../utils/funcs');
 const MockAdapter = require("axios-mock-adapter");
 const mock = new MockAdapter(instance);
 mock.onPost().reply(209, {
     message: 'Request to schedule pipeline processing-pipeline accepted'
 });
 
-jest.setTimeout(30000);
+
 
 
 
