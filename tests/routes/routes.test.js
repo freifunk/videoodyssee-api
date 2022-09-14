@@ -37,6 +37,16 @@ describe('API routes', function () {
 
     });
 
+    it('Route not found error test', async function () {
+        const res = await request(app)
+            .post('/invalid-route')
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .send({
+                title: 'title',
+                event:'Freifunk summit',
+            });
+        expect(res.body.message).toContain('Route not found!');
 
-
+    });
 });
