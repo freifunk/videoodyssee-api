@@ -1,4 +1,5 @@
 const axios = require('axios');
+const slugify = require('slugify');
 
 
 const instance = axios.create({
@@ -6,60 +7,142 @@ const instance = axios.create({
 });
 
 sendError = (res, err, resCode) => {
-	err = err || "Internal server error !";
-	resCode = resCode || 500;
-	console.log(err)
-	if (typeof err !== "string") err = "Internal server error!";
-	let message = {
-		code: resCode,
-		message: err,
-	};
-	res.status(resCode);
-	res.json(message);
-	res.end();
+    err = err || "Internal server error !";
+    resCode = resCode || 500;
+    console.log(err)
+    if (typeof err !== "string") err = "Internal server error!";
+    let message = {
+        code: resCode,
+        message: err,
+    };
+    res.status(resCode);
+    res.json(message);
+    res.end();
 };
 
 sendSuccess = (res, data, resCode) => {
-	resCode = resCode || 200;
-	data = data === undefined ? {} : data;
-	let message = {
-		code: resCode,
-		data: data,
-	};
-	res.status(resCode);
-	res.json(message);
-	res.end();
+    resCode = resCode || 200;
+    data = data === undefined ? {} : data;
+    let message = {
+        code: resCode,
+        data: data,
+    };
+    res.status(resCode);
+    res.json(message);
+    res.end();
 };
 
-triggerPipeline = (data) =>{
-	const {id,title,subtitle,url,name,email} = data;
+generateSlug = async (title) => {
+    slug = slugify(title, {
+        strict: true,
+        lower: true,
+    });
+
+    response = await instance.get(`${process.env.VOCTOWEB_URL}/public/events`);
+    events = response.data.events;
+    slugs = events.map((event)=>event.slug);
+    let counter = 1;
+    while(slug in slugs){
+        slug = `${slug}-${counter}`;
+        counter++;
+    }
+    console.log(slug);
+    return slug;
+}
+
+triggerPipeline = (data) => {
+    console.log(data);
+    const { id,
+        title,
+        subtitle,
+        persons,
+        tags,
+        event,
+        language,
+        slug,
+        date,
+        url,
+        name,
+        email,
+        link,
+        description } = data;
     const headers = {
         'Accept': 'application/vnd.go.cd.v1+json',
         'Content-Type': 'application/json',
         'Authorization': `bearer ${process.env.ACCESS_KEY}`
     };
     const body = {
-        "environment_variables":[
+        "environment_variables": [
             {
-                "name":"VIDEO_URL",
-                "value":url,
+                "name": "VIDEO_ID",
+                "value": id,
             },
             {
-                "name":"VIDEO_ID",
-                "value":id,
+                "name": "TITLE",
+                "value": title
             },
             {
-                "name":"TITLE",
-                "value":title
-            }
+                "name": "SUBTITLE",
+                "value": subtitle
+            },
+            {
+                "name": "PERSONS",
+                "value": persons
+            },
+            {
+                "name": "TAGS",
+                "value": tags
+            },
+            {
+                "name": "ACRONYM",
+                "value": event
+            },
+            {
+                "name": "SLUG",
+                "value": slug
+            },
+            {
+                "name": "LANGUAGE",
+                "value": 'eng'
+            },
+            {
+                "name": "DATE",
+                "value": date
+            },
+            {
+                "name": "RELEASE_DATE",
+                "value": date
+            },
+            {
+                "name": "VIDEO_URL",
+                "value": url,
+            },
+            {
+                "name": "NAME",
+                "value": name
+            },
+            {
+                "name": "EMAIL",
+                "value": email
+            },
+            {
+                "name": "LINK",
+                "value": link
+            },
+            {
+                "name": "DESCRIPTION",
+                "value": description
+            },
+           
         ]
     }
-    return instance.post(process.env.PIPELINE_URL,body,{headers});
+    return instance.post(process.env.PIPELINE_URL, body, { headers });
 }
 
-module.exports ={
+module.exports = {
     sendError,
     sendSuccess,
-	triggerPipeline,
+    generateSlug,
+    triggerPipeline,
     instance,
 }

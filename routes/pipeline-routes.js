@@ -7,6 +7,7 @@ const db = require("../db/db");
 
 router.post('/trigger', async (req, res, next) => {
     try {
+        console.log(req.body.persons);
         const {
             title,
             subtitle,
@@ -21,9 +22,12 @@ router.post('/trigger', async (req, res, next) => {
             link,
             description
         } = req.body;
-
         if (!title || !event || !language || !date || !url || !name || !email)
             throw { err_message: "Missing some required fields !", err_code: 406 }
+        req.body.persons = req.body.persons.join(" ");
+        req.body.tags = req.body.tags.join(" ");
+        req.body.slug = await funcs.generateSlug(title);
+        console.log("call successful");
         req.body.status = "pending";
         video = await db.Video.create(req.body);
         const response = await funcs.triggerPipeline(video.dataValues);

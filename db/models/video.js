@@ -1,12 +1,27 @@
 module.exports = (sequelize, Sequelize) => {
     const Video = sequelize.define("video", {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+      },
       title: {
         type: Sequelize.STRING
       },
       subtitle: {
         type: Sequelize.STRING
       },
+      persons: {
+        type: Sequelize.STRING
+      },
+      tags: {
+        type: Sequelize.STRING
+      },
       event: {
+        type: Sequelize.STRING
+      },
+      slug: {
         type: Sequelize.STRING
       },
       language: {
@@ -28,6 +43,9 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING
       },
       link: {
+        type: Sequelize.STRING
+      },
+      description: {
         type: Sequelize.STRING
       },
       status: {
