@@ -14,6 +14,7 @@ app.use(bodyParser.json())
 app.use(cors());
 
 app.use('/pipeline',require('./routes/pipeline-routes.js'));
+app.use('/video',require('./routes/video-routes.js'));
 
 
 app.use((req, res) => {
