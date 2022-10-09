@@ -46,7 +46,6 @@ generateSlug = async (title) => {
         slug = `${slug}-${counter}`;
         counter++;
     }
-    console.log(slug);
     return slug;
 }
 
@@ -57,7 +56,7 @@ triggerPipeline = (data) => {
         subtitle,
         persons,
         tags,
-        event,
+        conference,
         language,
         slug,
         date,
@@ -95,7 +94,7 @@ triggerPipeline = (data) => {
             },
             {
                 "name": "ACRONYM",
-                "value": event
+                "value": conference
             },
             {
                 "name": "SLUG",
@@ -103,7 +102,7 @@ triggerPipeline = (data) => {
             },
             {
                 "name": "LANGUAGE",
-                "value": 'eng'
+                "value": language
             },
             {
                 "name": "DATE",

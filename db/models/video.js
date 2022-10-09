@@ -18,7 +18,7 @@ module.exports = (sequelize, Sequelize) => {
       tags: {
         type: Sequelize.STRING
       },
-      event: {
+      conference: {
         type: Sequelize.STRING
       },
       slug: {
