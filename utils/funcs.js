@@ -1,10 +1,37 @@
 const axios = require('axios');
+const jwt = require("jsonwebtoken");
+const { response } = require('express');
 const slugify = require('slugify');
+
+const JWT_SECRET = process.env.JWT_SECRET || "temporary secret";
 
 
 const instance = axios.create({
     validateStatus: () => true,
 });
+
+
+genJWT = (data, secret = JWT_SECRET) => {
+	return jwt.sign(data, secret, {
+		expiresIn: "28d",
+	});
+};
+
+verifyJWT = (req, res, next) => {	
+	baseUrl = req.baseUrl.split("/").reverse()[0];
+    auth_token = req.headers["x-token"] || "";
+	if (!auth_token) return sendError(res, "Authentication token not provided!", 401);
+	jwt.verify(auth_token, JWT_SECRET, (err, data) => {
+		if (err) {
+			if (err.name === "TokenExpiredError") throw { err_message: "Authentication token expired!", err_code: 401 };
+			throw { err_message: "Invalid authentication token!", err_code: 401 };
+		}
+		delete data["exp"];
+		delete data["iat"];
+		req.email = data['email'];
+		next();
+	});
+};
 
 sendError = (res, err, resCode) => {
     err = err || "Internal server error !";
@@ -38,7 +65,8 @@ generateSlug = async (title) => {
         lower: true,
     });
 
-    response = await instance.get(`${process.env.VOCTOWEB_URL}/public/events`);
+    let response = await instance.get(`${process.env.VOCTOWEB_URL}/public/events`);
+    console.log(response);
     events = response.data.events;
     slugs = events.map((event)=>event.slug);
     let counter = 1;
@@ -144,4 +172,6 @@ module.exports = {
     generateSlug,
     triggerPipeline,
     instance,
+    genJWT,
+    verifyJWT,
 }

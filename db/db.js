@@ -28,5 +28,6 @@ module.exports = {
     sequelize,
     Sequelize,
     Video: require("./models/video")(sequelize, Sequelize),
+    User: require("./models/user")(sequelize, Sequelize),
 }
 

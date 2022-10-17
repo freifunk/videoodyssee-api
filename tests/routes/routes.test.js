@@ -28,6 +28,8 @@ describe('API routes', function () {
                 event:'Freifunk summit',
                 date:'21-01-2022',
                 language:'German',
+                persons:['vijay','Andi'],
+                tags:['test','videoodyssee'],
                 subtitle: 'subtile',
                 url: 'http://techslides.com/demos/sample-videos/small.mp4',
                 name: 'vijay',

@@ -17,7 +17,7 @@
 
 - name: Download the Express API code from the GitHub
   git:
-    repo: 'https://github.com/0xvj/videoodyssee-api.git'
+    repo: 'https://github.com/freifunk/videoodyssee-api.git'
     dest: "/opt/videoodyssee-api"
     force: yes
 
