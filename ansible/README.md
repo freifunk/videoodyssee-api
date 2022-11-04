@@ -37,7 +37,8 @@
 
 
 ## Deploy
-1 . Update the hosts.yaml file with your api domain name. The hosts.yaml file will look like this
+1. Naviagate to the ansible folder.
+2 . Update the hosts.yaml file with your api domain name. The hosts.yaml file will look like this
 
    ```
    all:
@@ -51,6 +52,6 @@
 
           
    ```
-2. Then run the videoodyssee-api-playbook.yaml playbook using the below command:
+3. Then run the videoodyssee-api-playbook.yaml playbook using the below command:
 
 `ansible-playbook -i hosts.yaml videoodyssee-api-playbook.yaml  -u vijay --ask-become-pass`
