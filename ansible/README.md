@@ -38,20 +38,21 @@
 
 ## Deploy
 1. Naviagate to the ansible folder.
+
 2 . Update the hosts.yaml file with your api domain name. The hosts.yaml file will look like this
 
-   ```
-   all:
-  children:
-    api:
-      hosts:
-        api.videopipeline.freifunk.net:
-          domains:
-            - api.videopipeline.freifunk.net
-          email: web+api.videopipeline@freifunk.net
 
-          
    ```
+       all:
+       children:
+         api:
+           hosts:
+             api.videopipeline.freifunk.net:
+               domains:
+                 - api.videopipeline.freifunk.net
+               email: web+api.videopipeline@freifunk.net
+   ```
+   
 3. Then run the videoodyssee-api-playbook.yaml playbook using the below command:
 
-`ansible-playbook -i hosts.yaml videoodyssee-api-playbook.yaml  -u vijay --ask-become-pass`
+`ansible-playbook -i hosts.yaml videoodyssee-api-playbook.yaml  -u vm_username --ask-become-pass`
