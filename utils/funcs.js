@@ -160,6 +160,10 @@ triggerPipeline = (data) => {
                 "name": "DESCRIPTION",
                 "value": description
             },
+            {
+                "name": "API_KEY",
+                "value":process.env.API_KEY
+            }
            
         ]
     }

@@ -23,6 +23,7 @@
     ```  
     PORT=8000
     ACCESS_KEY=12345f6af70744ced56773f47ef87d5a351234
+    API_KEY=12345f6af70744ced56773f47ef87d5a351234
     JWT_SECRET = "THISISJUSTATESTSECRETFORJWT"
     EMAIL="admin@freifunk.net"
     PASSWORD="test123"
@@ -31,9 +32,10 @@
     
     ```
 4. You can get the GOCD ACCESS_KEY from your GoCD server. You can read more about GoCD access tokens [here](https://docs.gocd.org/current/configuration/access_tokens.html).
-5. JWT_SECRET is a secret key which will used for JWT authentication.
-6. Email and password will the credentials of our videodyssee dashboard.
-7. Replace the PIPELINE_URL and VOCTOWEB_URL with your pipline and voctoweb addresses.
+5. API_KEY is the API key of VOCTOWEB.
+6. JWT_SECRET is a secret key which will used for JWT authentication.
+7. Email and password will the credentials of our videodyssee dashboard.
+8. Replace the PIPELINE_URL and VOCTOWEB_URL with your pipline and voctoweb addresses.
 
 
 ## Deploy
