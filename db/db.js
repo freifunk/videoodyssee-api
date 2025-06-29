@@ -1,33 +1,40 @@
+require('dotenv').config();
 const { Sequelize } = require('sequelize');
+const logger = require('../utils/logger');
 
+// Database configuration
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: './database.sqlite',
-    logging: false
+    logging: (msg) => logger.debug(`🗄️  ${msg}`), // Log SQL queries as debug
 });
 
-
+// Test database connection
 sequelize.authenticate()
     .then(() => {
-        console.log("SQLite connection has been established successfully");
+        logger.info('🗄️  SQLite database connection established successfully');
     }).catch(err => {
-        console.error('Unable to connect to the database:', err);
-    })
+        logger.error('❌ Unable to connect to database:', err);
+    });
 
+// Import models
+const Video = require('./models/video')(sequelize, Sequelize);
+const User = require('./models/user')(sequelize, Sequelize);
 
+// Sync database
 const dbSync = sequelize.sync()
     .then(() => {
-        console.log("Synced db.");
+        logger.info('🔄 Database synchronized successfully');
     })
     .catch((err) => {
-        console.log("Failed to sync db: " + err.message);
+        logger.error('❌ Database sync failed:', err);
     });
 
 module.exports = {
     dbSync,
     sequelize,
     Sequelize,
-    Video: require("./models/video")(sequelize, Sequelize),
-    User: require("./models/user")(sequelize, Sequelize),
+    Video,
+    User,
 }
 

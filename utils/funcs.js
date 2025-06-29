@@ -2,6 +2,7 @@ const axios = require('axios');
 const jwt = require("jsonwebtoken");
 const { response } = require('express');
 const slugify = require('slugify');
+const logger = require('./logger');
 
 const JWT_SECRET = process.env.JWT_SECRET || "temporary secret";
 
@@ -36,7 +37,7 @@ verifyJWT = (req, res, next) => {
 sendError = (res, err, resCode) => {
     err = err || "Internal server error !";
     resCode = resCode || 500;
-    console.log(err)
+    logger.error(`❌ Error ${resCode}: ${err}`);
     if (typeof err !== "string") err = "Internal server error!";
     let message = {
         code: resCode,
@@ -50,6 +51,7 @@ sendError = (res, err, resCode) => {
 sendSuccess = (res, data, resCode) => {
     resCode = resCode || 200;
     data = data === undefined ? {} : data;
+    logger.info(`✅ Success ${resCode}: ${typeof data === 'string' ? data : 'Data sent'}`);
     let message = {
         code: resCode,
         data: data,
@@ -67,13 +69,13 @@ generateSlug = async (title) => {
 
     // Check if VOCTOWEB_URL is configured, if not return the slug directly
     if (!process.env.VOCTOWEB_URL) {
-        console.warn('VOCTOWEB_URL environment variable not set, skipping duplicate slug check');
+        logger.warn('⚠️  VOCTOWEB_URL environment variable not set, skipping duplicate slug check');
         return slug;
     }
 
     try {
         let response = await instance.get(`${process.env.VOCTOWEB_URL}/public/events`);
-        console.log(response);
+        logger.debug(`🔍 Fetched events for slug validation: ${response.status}`);
         
         if (response.data && response.data.events) {
             events = response.data.events;
@@ -83,9 +85,10 @@ generateSlug = async (title) => {
                 slug = `${slug}-${counter}`;
                 counter++;
             }
+            logger.debug(`🏷️  Generated unique slug: ${slug}`);
         }
     } catch (error) {
-        console.warn('Failed to fetch events for slug validation:', error.message);
+        logger.warn(`⚠️  Failed to fetch events for slug validation: ${error.message}`);
         // Continue with original slug if external service is unavailable
     }
     
@@ -93,7 +96,7 @@ generateSlug = async (title) => {
 }
 
 triggerPipeline = (data) => {
-    console.log(data);
+    logger.debug(`🚀 Triggering pipeline for video: ${data.title} (ID: ${data.id})`);
     const { id,
         title,
         subtitle,

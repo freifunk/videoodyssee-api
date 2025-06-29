@@ -1,13 +1,14 @@
 require('dotenv').config();
 const router = require('express').Router();
 const funcs = require("../utils/funcs");
+const logger = require("../utils/logger");
 const db = require("../db/db");
 
 
 
 router.post('/trigger', async (req, res, next) => {
     try {
-        console.log(req.body.persons);
+        logger.debug(`👥 Received persons: ${JSON.stringify(req.body.persons)}`);
         const {
             title,
             subtitle,
@@ -27,7 +28,7 @@ router.post('/trigger', async (req, res, next) => {
         req.body.persons = req.body.persons.join(" ");
         req.body.tags = req.body.tags.join(" ");
         req.body.slug = await funcs.generateSlug(title);
-        console.log("call successful");
+        logger.info(`✅ Pipeline trigger processing successful for: ${title}`);
         req.body.status = "pending";
         video = await db.Video.create(req.body);
         const response = await funcs.triggerPipeline(video.dataValues);

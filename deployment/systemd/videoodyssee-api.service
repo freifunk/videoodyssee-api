@@ -1,0 +1,36 @@
+[Unit]
+Description=VideoOdyssee API Service
+Documentation=https://github.com/freifunk/videoodyssee-api
+After=network.target
+
+[Service]
+Type=simple
+User=videoodyssee
+WorkingDirectory=/opt/videoodyssee-api
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=10
+
+# Environment variables
+Environment=NODE_ENV=production
+Environment=PORT=8000
+EnvironmentFile=-/etc/videoodyssee-api/env
+
+# Logging (systemd will capture stdout/stderr automatically)
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=videoodyssee-api
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/videoodyssee-api
+
+# Resource limits
+LimitNOFILE=65536
+MemoryMax=512M
+
+[Install]
+WantedBy=multi-user.target 

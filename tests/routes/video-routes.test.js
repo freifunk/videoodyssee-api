@@ -92,6 +92,11 @@ describe('Video Routes', function () {
     });
 
     describe('POST /video/list - List Videos', () => {
+        beforeEach(async () => {
+            // Ensure clean database state for each test
+            await db.Video.destroy({ where: {}, truncate: true });
+        });
+
         it('should return empty list when no videos exist', async () => {
             const res = await request(app)
                 .post('/video/list')
@@ -102,7 +107,7 @@ describe('Video Routes', function () {
         });
 
         it('should return list of videos ordered by updatedAt DESC', async () => {
-            // Create test videos
+            // Create test videos with slight delay to ensure different timestamps
             const video1 = await db.Video.create({
                 title: 'Video 1',
                 conference: 'Conf1',
@@ -113,6 +118,9 @@ describe('Video Routes', function () {
                 email: 'user1@example.com',
                 status: 'pending'
             });
+
+            // Small delay to ensure different timestamps
+            await new Promise(resolve => setTimeout(resolve, 10));
 
             const video2 = await db.Video.create({
                 title: 'Video 2', 
