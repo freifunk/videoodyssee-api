@@ -65,15 +65,30 @@ generateSlug = async (title) => {
         lower: true,
     });
 
-    let response = await instance.get(`${process.env.VOCTOWEB_URL}/public/events`);
-    console.log(response);
-    events = response.data.events;
-    slugs = events.map((event)=>event.slug);
-    let counter = 1;
-    while(slug in slugs){
-        slug = `${slug}-${counter}`;
-        counter++;
+    // Check if VOCTOWEB_URL is configured, if not return the slug directly
+    if (!process.env.VOCTOWEB_URL) {
+        console.warn('VOCTOWEB_URL environment variable not set, skipping duplicate slug check');
+        return slug;
     }
+
+    try {
+        let response = await instance.get(`${process.env.VOCTOWEB_URL}/public/events`);
+        console.log(response);
+        
+        if (response.data && response.data.events) {
+            events = response.data.events;
+            slugs = events.map((event)=>event.slug);
+            let counter = 1;
+            while(slug in slugs){
+                slug = `${slug}-${counter}`;
+                counter++;
+            }
+        }
+    } catch (error) {
+        console.warn('Failed to fetch events for slug validation:', error.message);
+        // Continue with original slug if external service is unavailable
+    }
+    
     return slug;
 }
 

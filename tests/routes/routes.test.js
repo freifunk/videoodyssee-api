@@ -14,7 +14,9 @@ describe('API routes', function () {
         return dbSync;
     })
     afterAll(done => {
-        server.close();
+        if (server) {
+            server.close();
+        }
         done();
     });
 

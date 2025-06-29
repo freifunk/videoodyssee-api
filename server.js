@@ -27,9 +27,13 @@ app.use((err, req, res, next) => {
 	else return funcs.sendError(res, err.err_message || err, err.err_code);
 });
 
-const server = app.listen(PORT,()=>{
-    console.log(`Listening at port ${process.env.PORT}`);
-})
+// Only start server if not in test environment
+let server;
+if (process.env.NODE_ENV !== 'test') {
+	server = app.listen(PORT,()=>{
+		console.log(`Listening at port ${process.env.PORT}`);
+	});
+}
 
 module.exports = {
 	app,
