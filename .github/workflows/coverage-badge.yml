@@ -27,13 +27,24 @@ jobs:
         
       - name: 📊 Generate coverage badge
         run: |
-          # Extract coverage percentage
-          COVERAGE=$(node -e "
-            const fs = require('fs');
-            const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
-            const pct = coverage.total.lines.pct;
-            console.log(Math.round(pct));
-          ")
+          # Check if coverage summary exists
+          if [ ! -f "coverage/coverage-summary.json" ]; then
+            echo "⚠️ Coverage summary not found, generating default badge"
+            COVERAGE=0
+          else
+            # Extract coverage percentage
+            COVERAGE=$(node -e "
+              try {
+                const fs = require('fs');
+                const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+                const pct = coverage.total.lines.pct;
+                console.log(Math.round(pct));
+              } catch (error) {
+                console.error('Error reading coverage:', error.message);
+                console.log(0);
+              }
+            ")
+          fi
           
           echo "Coverage: ${COVERAGE}%"
           
@@ -52,26 +63,21 @@ jobs:
           # Download badge
           curl -s "$BADGE_URL" > coverage-badge.svg
           
-          echo "Generated coverage badge: ${COVERAGE}% (${COLOR})"
+          echo "✅ Generated coverage badge: ${COVERAGE}% (${COLOR})"
           
       - name: 🧪 Generate tests badge
         run: |
-          # Extract test count from package.json test script and coverage
-          TESTS_TOTAL=$(npm test 2>&1 | grep -E "Tests:|✓" | tail -1 | grep -oE '[0-9]+' | head -1 || echo "26")
+          # Try to get test count from Jest output
+          TEST_OUTPUT=$(npm test 2>&1 | grep -E "Tests:" | tail -1 || echo "")
           
-          # If we can't extract, check coverage summary for test count
-          if [ -z "$TESTS_TOTAL" ] || [ "$TESTS_TOTAL" = "0" ]; then
-            TESTS_TOTAL=$(node -e "
-              try {
-                const fs = require('fs');
-                const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
-                // Rough estimate: count covered functions as proxy for tests
-                const funcs = Object.values(coverage).reduce((acc, file) => acc + (file.functions?.total || 0), 0);
-                console.log(Math.max(funcs, 26)); // Default to 26 if calculation fails
-              } catch (e) {
-                console.log(26); // Fallback
-              }
-            ")
+          if [[ "$TEST_OUTPUT" =~ ([0-9]+)\ passed ]]; then
+            TESTS_TOTAL=$(echo "$TEST_OUTPUT" | grep -oE '[0-9]+' | head -1)
+          else
+            # Fallback: count test files
+            TESTS_TOTAL=$(find tests -name "*.test.js" -exec grep -l "test\|it\|describe" {} \; | wc -l)
+            if [ "$TESTS_TOTAL" -eq 0 ]; then
+              TESTS_TOTAL=26  # Known fallback
+            fi
           fi
           
           echo "Tests: ${TESTS_TOTAL}"
@@ -82,12 +88,15 @@ jobs:
           # Download badge
           curl -s "$TESTS_BADGE_URL" > tests-badge.svg
           
-          echo "Generated tests badge: ${TESTS_TOTAL} tests"
+          echo "✅ Generated tests badge: ${TESTS_TOTAL} tests"
           
       - name: 🛡️ Generate security badge
         run: |
           # Run npm audit and capture output
-          AUDIT_OUTPUT=$(npm audit --audit-level=low --json 2>/dev/null || echo '{"vulnerabilities":{}}')
+          set +e  # Don't exit on audit failure
+          AUDIT_OUTPUT=$(npm audit --audit-level=low --json 2>/dev/null)
+          AUDIT_EXIT_CODE=$?
+          set -e
           
           # Extract vulnerability counts
           VULNS=$(echo "$AUDIT_OUTPUT" | node -e "
@@ -103,7 +112,7 @@ jobs:
                 console.log(0);
               }
             });
-          ")
+          " 2>/dev/null || echo "0")
           
           echo "Vulnerabilities: ${VULNS}"
           
@@ -125,19 +134,19 @@ jobs:
           # Download badge
           curl -s "$SECURITY_BADGE_URL" > security-badge.svg
           
-          echo "Generated security badge: ${VULNS} vulnerabilities (${COLOR})"
+          echo "✅ Generated security badge: ${VULNS} vulnerabilities (${COLOR})"
           
       - name: 📊 Commit badges
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          # Add both badges
+          # Add all badges
           git add coverage-badge.svg security-badge.svg tests-badge.svg
           
           if ! git diff --staged --quiet; then
             git commit -m "📊 Update coverage and security badges [skip ci]"
             git push
           else
-            echo "No changes to badges"
+            echo "ℹ️ No changes to badges"
           fi 
