@@ -81,7 +81,7 @@ generateSlug = async (title) => {
             events = response.data.events;
             slugs = events.map((event)=>event.slug);
             let counter = 1;
-            while(slug in slugs){
+            while(slugs.includes(slug)){
                 slug = `${slug}-${counter}`;
                 counter++;
             }
