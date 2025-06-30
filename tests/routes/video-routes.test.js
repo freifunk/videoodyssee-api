@@ -29,8 +29,9 @@ describe('Video Routes', function () {
 
     describe('POST /video - Create Video', () => {
         it('should create a video successfully with all required fields', async () => {
+            const uniqueTitle = `Test Video ${Date.now()}`;
             const videoData = {
-                title: 'Test Video',
+                title: uniqueTitle,
                 subtitle: 'Test Subtitle',
                 persons: ['John Doe', 'Jane Doe'],
                 tags: ['tag1', 'tag2'],
@@ -52,8 +53,13 @@ describe('Video Routes', function () {
             expect(res.body.code).toBe(200);
             expect(res.body.data).toBe('Video submitted successfully !');
 
-            // Verify video was created in database
-            const createdVideo = await db.Video.findOne({ where: { title: 'Test Video' } });
+            // Verify video was created in database with specific query
+            const createdVideo = await db.Video.findOne({ 
+                where: { 
+                    title: uniqueTitle,
+                    email: 'test@example.com'
+                } 
+            });
             expect(createdVideo).toBeTruthy();
             expect(createdVideo.status).toBe('pending');
             expect(createdVideo.persons).toBe('John Doe Jane Doe');
