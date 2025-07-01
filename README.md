@@ -3,9 +3,9 @@
 🎥 **Modern, secure and production-ready API for video processing workflows**
 
 [![CI Status](https://github.com/freifunk/videoodyssee-api/actions/workflows/ci.yml/badge.svg)](https://github.com/freifunk/videoodyssee-api/actions/workflows/ci.yml)
-![Tests](./tests-badge.svg)
-![Coverage](./coverage-badge.svg)
-![Security](./security-badge.svg)
+[![Tests](https://freifunk.github.io/videoodyssee-api/badges/tests.svg)](https://github.com/freifunk/videoodyssee-api/actions/workflows/ci.yml)
+[![Coverage](https://freifunk.github.io/videoodyssee-api/badges/coverage.svg)](https://freifunk.github.io/videoodyssee-api/coverage/)
+[![Security](https://freifunk.github.io/videoodyssee-api/badges/security.svg)](https://github.com/freifunk/videoodyssee-api/security/advisories)
 [![Node.js](https://img.shields.io/badge/node.js-18%2B-brightgreen)](https://nodejs.org/)
 
 ## 🚀 Features
